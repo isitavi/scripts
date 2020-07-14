@@ -1,0 +1,19 @@
+pipeline {
+    agent any
+    
+    triggers {
+        upstream 'docker-container'
+    }
+    
+    stages {
+        stage('copy_artifact') {
+            steps {
+                copyArtifacts filter: 'index.html', fingerprintArtifacts: true, projectName: 'docker-container', selector: lastSuccessful()
+            }
+        }
+        stage('put_it') {
+            steps {
+                sh 'cp ./index.html /tmp/content'
+            }
+        }
+    }
